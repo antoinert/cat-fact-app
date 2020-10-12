@@ -25,12 +25,21 @@ type CatFactResponse = {
 };
 
 const FactApp: React.FunctionComponent = () => {
-  const [catFacts, setCatFacts, loadingCatFacts, catFactError] = useAsyncState<
-    CatFactResponse
-  >(catFactsUrl, {}, undefined);
+  const [
+    catFacts,
+    setCatFacts,
+    loadingCatFacts,
+    catFactError,
+    getCatFacts,
+  ] = useAsyncState<CatFactResponse>(catFactsUrl, {}, undefined);
 
-  const randomizeCatFacts = (): void => {
-    if (catFacts) setCatFacts({ all: shuffle(catFacts.all) });
+  const randomizeCatFacts = async (): Promise<void> => {
+    if (catFactError) {
+      await getCatFacts();
+    }
+    if (catFacts) {
+      setCatFacts({ all: shuffle(catFacts.all) });
+    }
   };
 
   const factIsAboutCats = (fact: string): boolean => {

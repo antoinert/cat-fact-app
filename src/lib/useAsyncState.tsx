@@ -9,9 +9,10 @@ function useAsyncState<T>(
   T | undefined,
   React.Dispatch<React.SetStateAction<T | undefined>>,
   boolean,
-  Error
+  Error,
+  (route?: string | undefined) => Promise<T>
 ] {
-  const { data, loading, error } = useFetch<T>(url, options, []);
+  const { get, data, loading, error } = useFetch<T>(url, options, []);
   const [asyncState, setAsyncState] = useState<T | undefined>(defaultValue);
 
   useEffect(() => {
@@ -20,7 +21,7 @@ function useAsyncState<T>(
     }
   }, [data]);
 
-  return [asyncState, setAsyncState, loading, error];
+  return [asyncState, setAsyncState, loading, error, get];
 }
 
 export default useAsyncState;
