@@ -48,12 +48,38 @@ describe("FactApp", () => {
     });
 
     const factApp = render(<FactApp />);
-    const factAppListItem = await factApp.findAllByRole(
+    const factAppListItems = await factApp.findAllByRole(
       "listitem",
       {},
       { timeout: 5000 }
     );
 
-    expect(factAppListItem).toBeTruthy();
+    expect(factAppListItems).toBeTruthy();
+  });
+
+  it("renders new facts on button click", async () => {
+    nock(catFactsBaseUrl).get(catFactsPath).reply(200, mockedCatFactList, {
+      "Access-Control-Allow-Origin": "*",
+      "Content-type": "application/json",
+    });
+
+    const factApp = render(<FactApp />);
+    const factAppButton = factApp.getByRole("button");
+
+    const factAppListItems = await factApp.findAllByRole(
+      "listitem",
+      {},
+      { timeout: 5000 }
+    );
+
+    const factAppListItemTextsBeforeClick = factAppListItems.map(
+      (item) => item.textContent
+    );
+
+    factAppButton.click();
+
+    expect(factAppListItems.map((item) => item.textContent)).not.toBe(
+      factAppListItemTextsBeforeClick
+    );
   });
 });
